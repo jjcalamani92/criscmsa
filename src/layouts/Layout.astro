@@ -1,0 +1,41 @@
+---
+export interface Props {
+	title: string;
+	description?: string;
+	ogImage?: string;
+}
+import type { Site } from '@interfaces/site';
+import HeaderP1 from '@components/HeaderP1.astro';
+
+import { type, uid, url, v } from '@utils/const';
+
+const site: Site = await fetch(
+  `${url}/api/${v}/${type}/query/sites/${uid}`
+).then((response) => response.json());
+const pages = await fetch(
+	`${url}/api/${v}/${type}/query/pages/page/parentId?id=${uid}`
+).then((response) => response.json());
+
+import "@styles/globals.css";
+const { title, description, ogImage } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description">
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		{
+			site.data.type === 'portfolio' &&
+			<HeaderP1 site={site} pages={pages} />
+		}
+		<slot />
+	</body>
+</html>
+
